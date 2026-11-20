@@ -31,3 +31,12 @@ test("times out and cancels on unmount", async () => {
   view.unmount();
   expect(signal.aborted).toBe(true);
 });
+
+test("renders incomplete records without crashing or interactive fake trailers", async () => {
+  global.fetch = jest.fn().mockResolvedValue({ok:true,json:async () => ({result:[null,{title:"A movie",runTime:90,director:["One","Two"]},{}]})});
+  render(<DashboardContent />);
+  expect(await screen.findByRole("heading",{name:"A movie"})).toBeTruthy();
+  expect(screen.getByText("One, Two")).toBeTruthy();
+  expect(screen.getByText(/90 mins/)).toBeTruthy();
+  expect(screen.queryByRole("button",{name:"Watch Trailer"})).toBeNull();
+});
