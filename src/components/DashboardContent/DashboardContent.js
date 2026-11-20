@@ -4,38 +4,46 @@ import { BsFillCaretUpFill, BsFillCaretDownFill } from "react-icons/bs";
 export default function DashboardContent() {
   const [data, setData] = React.useState([]);
 
-  React.useEffect(() => {
-    const url = "https://hoblist.com/api/movieList";
+  const [status, setStatus] = React.useState("loading");
+  const [attempt, setAttempt] = React.useState(0);
 
+  React.useEffect(() => {
+    const controller = new AbortController();
+    let active = true;
+    const timer = setTimeout(() => controller.abort(), 10000);
+    setStatus("loading");
     const fetchData = async () => {
       try {
-        const response = await fetch(url, {
+        const response = await fetch("https://hoblist.com/api/movieList", {
           method: "POST",
-          body: JSON.stringify({
-            category: "movies",
-            language: "kannada",
-            genre: "all",
-            mode: "cors",
-            sort: "voting",
-          }),
-          headers: {
-            "Content-Type": "application/xml",
-          },
+          signal: controller.signal,
+          body: JSON.stringify({ category: "movies", language: "kannada", genre: "all", sort: "voting" }),
+          headers: { "Content-Type": "application/json" },
         });
+        if (!response.ok) throw new Error("Request failed");
         const json = await response.json();
-        console.log(json);
-        setData(json.result);
-      } catch (error) {
-        console.log("error", error);
+        if (!Array.isArray(json.result)) throw new Error("Invalid response");
+        if (active) {
+          setData(json.result);
+          setStatus("ready");
+        }
+      } catch {
+        if (active) setStatus("error");
+      } finally {
+        clearTimeout(timer);
       }
     };
     fetchData();
-  }, []);
+    return () => { active = false; clearTimeout(timer); controller.abort(); };
+  }, [attempt]);
+
+  if (status === "loading") return <p className="container py-4" role="status">Loading movies…</p>;
+  if (status === "error") return <div className="container py-4"><p role="alert">Movies could not be loaded. The provider may be unavailable.</p><button className="btn btn-primary" onClick={() => setAttempt(attempt + 1)}>Try again</button></div>;
+  if (!data.length) return <p className="container py-4" role="status">No movies are available right now.</p>;
 
   return (
     <div className="bg-secondary">
       <div className="container">
-        {console.log(data)}
         {data.map((content) => {
           let date = new Date(content.releasedDate);
           let shortDate = date.toLocaleDateString("en-US", {
