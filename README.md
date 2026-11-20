@@ -1,70 +1,34 @@
-# Getting Started with Create React App
+# Movie-details
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React movie-browsing demo originally built as a GeekSynergy assignment. The home page and `/dashboard` show Kannada movies from the external Hoblist provider. No account is required.
 
-## Available Scripts
+The interface handles loading, empty data, malformed responses, request failures, a ten-second timeout and retry. Movie votes are read-only. The provider does not supply a usable trailer link in the supported contract, so cards explicitly say trailers are unavailable.
 
-In the project directory, you can run:
+## Run and verify
 
-### `npm start`
+Use Node.js 22 and npm:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```sh
+npm ci
+npm start
+npm test -- --watchAll=false --runInBand
+CI=true npm run build
+npx playwright install chromium
+npm run test:browser
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The production build runs Create React App's ESLint checks. Browser tests serve `build/` and use synthetic test-only provider fixtures. They cover 320, 768 and 1280px layouts, keyboard access, storage preservation and failure recovery. Fixture tests do not prove the external service is working. There is no TypeScript checker.
 
-### `npm test`
+## Current release blockers
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- On November 21, 2026 IST, POST `https://hoblist.com/api/movieList` redirected and returned an HTML page instead of movie JSON. The UI reports the failure, but live movie browsing is not verified. A provider replacement needs a separately scoped proposal; no paid API is configured.
+- `npm audit` on the legacy dependency tree reports 84 findings (7 critical, 41 high, 22 moderate, 14 low). A framework/dependency migration needs separate assessment before production readiness. Do not use `npm audit fix --force` blindly.
+- Old signup/login source remains disabled and is not production authentication. It stores plaintext credentials under `localStorage.data`; do not enable it or enter real credentials. This change does not delete existing browser data.
 
-### `npm run build`
+## Existing deployment
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Repository homepage: https://geek-synergy.vercel.app. The existing site returned HTTP 200 during inspection; that does not prove it contains this branch. No new hosting, paid service or account was provisioned.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+For release, resolve the provider and dependency blockers, review/merge the PR, verify the existing Vercel build/runtime settings, and test the actual served site. Configure an SPA fallback to `index.html` if direct `/dashboard` navigation is not already supported. Verify home/deep links, keyboard navigation, mobile layout, real provider access, retry and missing data. A successful local build or PR is not a deployment.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Ideas, scope and decisions: [improvement register](docs/improvement-log.md).

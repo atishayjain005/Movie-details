@@ -1,8 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const showDetails = (
   <div
-    className="d-flex flex-column text-light position-absolute bg-white text-dark shadow-lg me-1 p-3 my-2 rounded-3 "
+    id="company-details"
+    className="company-details d-flex flex-column text-light position-absolute bg-white text-dark shadow-lg me-1 p-3 my-2 rounded-3 "
     style={{ zIndex: 1, right: "1rem" }}
   >
     <p className="m-0">
@@ -27,22 +29,25 @@ export default function Navbar() {
   const [state, setState] = React.useState(false);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav aria-label="Main navigation" className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <div className=" container d-flex justify-content-between w-100">
-          <a className="navbar-brand" href="/">
-            <h2 className="m-0" onClick={() => localStorage.clear()}>
+          <Link className="navbar-brand" to="/">
+            <span className="h2 m-0">
               GeekSynergy
-            </h2>
-          </a>
+            </span>
+          </Link>
           <div >
             <button
+              aria-expanded={state}
+              aria-controls="company-details"
+              onKeyDown={(event) => { if (event.key === "Escape") setState(false); }}
               className="btn btn-lg btn-primary dropdown-toggle"
               onClick={() => setState(!state)}
             >
               Company Info
             </button>
-            <div>{state && showDetails}</div>
+            <div hidden={!state}>{showDetails}</div>
           </div>
         </div>
       </div>
