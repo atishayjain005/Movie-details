@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const showDetails = (
   <div
@@ -30,11 +31,11 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <div className=" container d-flex justify-content-between w-100">
-          <a className="navbar-brand" href="/">
-            <h2 className="m-0" onClick={() => localStorage.clear()}>
+          <Link className="navbar-brand" to="/">
+            <h2 className="m-0">
               GeekSynergy
             </h2>
-          </a>
+          </Link>
           <div >
             <button
               className="btn btn-lg btn-primary dropdown-toggle"
