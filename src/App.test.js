@@ -15,3 +15,15 @@ test("unknown route offers recovery and brand navigation preserves storage", () 
   expect(localStorage.getItem("unrelated")).toBe("keep");
   expect(fetch).toHaveBeenCalled();
 });
+
+test("has a main landmark and keyboard-operable company disclosure", () => {
+  render(<MemoryRouter><App /></MemoryRouter>);
+  expect(screen.getByRole("main")).toBeTruthy();
+  expect(screen.getByRole("heading", {level:1,name:"Kannada movies"})).toBeTruthy();
+  const button = screen.getByRole("button", {name:"Company Info"});
+  expect(button.getAttribute("aria-expanded")).toBe("false");
+  fireEvent.click(button);
+  expect(button.getAttribute("aria-expanded")).toBe("true");
+  fireEvent.keyDown(button, {key:"Escape"});
+  expect(button.getAttribute("aria-expanded")).toBe("false");
+});

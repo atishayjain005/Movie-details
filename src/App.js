@@ -7,11 +7,12 @@ import Dashboard from "./pages/Dashboard";
 function App() {
   return (
     <div className="App">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="*" element={<main className="container py-4"><h1>Page not found</h1><Link to="/">Browse movies</Link></main>} />
+        <Route path="*" element={<main id="main-content" tabIndex="-1" className="container py-4"><h1>Page not found</h1><Link to="/">Browse movies</Link></main>} />
       </Routes>
     </div>
   );
