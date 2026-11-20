@@ -16,3 +16,7 @@ No approval requests, deadlines, or auto-approvals in this run. Existing public 
 ## Validation
 
 Each implementation commit runs the growing React regression suite, production build (including ESLint), and git diff check. No TypeScript in this project. Initial CI build found a deprecated color-adjust rule in Bootstrap 5.1; compatible Bootstrap 5.2.3 resolves that build blocker.
+
+Final checks: 12 React/unit tests and five Chromium tests pass, with 320/768/1280px layout checks and visually inspected mobile screenshot. Production build and diff checks pass. GitHub CI added on Ubuntu 24.04 / Node 22. npm audit: 84 findings (7 critical, 41 high, 22 moderate, 14 low); separate dependency migration remains Backlog.
+
+Provider check: POST redirected to HTML rather than movie JSON. Existing Vercel homepage returned HTTP 200, but branch runtime is not deployed or verified. Do not claim production readiness. Implementation moves to Review / Testing; dependency/provider/served-release work remains Backlog. No approvals or auto-approvals.
